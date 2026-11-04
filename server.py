@@ -155,5 +155,32 @@ def get_request(request_id: str) -> dict:
     return request.as_dict()
 
 
+COLUMNS = {
+    "request_id": "Unique id of the request. Pass it to get_request.",
+    "opened": "When the resident filed the request (ISO 8601, local time).",
+    "closed": "When the city closed it (ISO 8601), or null while still open.",
+    "status": "'Open' or 'Closed'. Filter with search_requests(status=...).",
+    "service": "Request category, such as 'Encampment'. Exact names come from dataset_info.",
+    "subtype": "Finer detail within a service. Returned by search_requests and get_request only.",
+    "agency": "City agency responsible. Groupable in count_requests and median_close_hours.",
+    "neighborhood": "One of 41 official analysis neighborhoods, or empty when unknown. Exact names come from dataset_info.",
+    "local_name": "Name people use for the area, such as 'Lower Nob Hill'. Can span several official neighborhoods. Not filterable.",
+    "address": "Street address of the request.",
+    "source": "Channel used to file it (phone, app, web, and so on). Groupable in count_requests.",
+}
+
+
+@mcp.resource(
+    "sf311://columns",
+    name="columns",
+    description="What each field of a 311 request means, and which tools can filter or group by it.",
+    mime_type="application/json",
+    annotations={"readOnlyHint": True},
+)
+def columns() -> dict[str, str]:
+    """Field-by-field description of a 311 request record."""
+    return COLUMNS
+
+
 if __name__ == "__main__":
     mcp.run()
